@@ -58,6 +58,7 @@ export default function BinaryDecimalConverter() {
       calculation: `${calculations.map((c) => c.split(" = ")[1]).join(" + ")} = ${total}`,
     })
 
+    if (!Number.isSafeInteger(total)) throw new RangeError("Value exceeds safe integer precision")
     return { result: total.toString(), steps }
   }
 
@@ -66,6 +67,7 @@ export default function BinaryDecimalConverter() {
 
     const steps: ConversionStep[] = []
     let num = Number.parseInt(decimal, 10)
+    if (!Number.isSafeInteger(num)) throw new RangeError("Value exceeds safe integer precision")
     const remainders: number[] = []
 
     steps.push({ description: "Converting decimal to binary using division by 2:" })
@@ -101,7 +103,7 @@ export default function BinaryDecimalConverter() {
           setDecimalValue(result)
           setConversionSteps(steps)
         } catch {
-          setError("Invalid binary number")
+          setError("Use a binary value representing an integer up to 9007199254740991")
           setConversionSteps([])
         }
       } else {
@@ -123,7 +125,7 @@ export default function BinaryDecimalConverter() {
           setBinaryValue(result)
           setConversionSteps(steps)
         } catch {
-          setError("Invalid decimal number")
+          setError("Use a decimal integer up to 9007199254740991")
           setConversionSteps([])
         }
       } else {
@@ -231,6 +233,7 @@ export default function BinaryDecimalConverter() {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Copy result"
                   onClick={() =>
                     copyToClipboard(
                       mode === "binary-to-decimal" ? decimalValue : binaryValue,
